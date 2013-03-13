@@ -22,6 +22,7 @@ class ODSParser:
 
     '''Default ODS file'''
     ods = 'gg_text_value.ods'
+    '''Extracted ODS'''
     content = 'content.xml'
 
     remove_patterns = [
@@ -32,14 +33,16 @@ class ODSParser:
     ]
 
     def __init__(self, filename = False):
-        ''''''
+        '''Extract ODS and parse it'''
         if (filename != False):
             self.ods = filename
         self.open()
         self.row_parser()
-        os.remove('content.xml')
+        # TODO Check usage by thirdparty tools
+        os.remove(self.content)
 
     def clean(self, xml):
+        '''Removing problematic tags'''
         for pattern in self.remove_patterns:
             rmtag = re.compile(pattern)
             xml = re.sub(rmtag1, '', xml)
