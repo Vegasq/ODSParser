@@ -25,12 +25,25 @@ class ODSParser:
     ods = 'gg_text_value.ods'
     content = 'content.xml'
 
+    remove_patterns = [
+        r'<text:[^>]*>',
+        r'</text:[^>]*>',
+        r'<dc:date>.*?</dc:date>',
+        r'<office:annotation.*?:annotation>'
+    ]
+
     def __init__(self, filename = False):
         '''Make you life simpler'''
         if (filename != False):
             self.ods = filename
         self.open()
         self.row_parser()
+
+    def clean(self, xml):
+        for pattern in self.remove_patterns:
+            rmtag = re.compile(pattern)
+            xml = re.sub(rmtag1, '', xml)
+        return xml
 
     def open(self):
         '''Extract XML from ods'''
@@ -41,15 +54,7 @@ class ODSParser:
         lines = content.read()
         content.close()
 
-        rmtag1 = re.compile(r'<text:[^>]*>')
-        rmtag2 = re.compile(r'</text:[^>]*>')
-        rmtag3 = re.compile(r'<dc:date>.*?</dc:date>')
-        rmtag4 = re.compile(r'<office:annotation.*?:annotation>')
-
-        lines = re.sub(rmtag1,'',lines)
-        lines = re.sub(rmtag2,'',lines)
-        lines = re.sub(rmtag3,'',lines)
-        lines = re.sub(rmtag4,'',lines)
+        lines = self.clean(lines)
 
         content = open(self.content,'w')
         content.write(lines)
