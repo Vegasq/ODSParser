@@ -37,6 +37,7 @@ class ODSParser:
             self.ods = filename
         self.open()
         self.row_parser()
+        os.remove('content.xml')
 
     def clean(self, xml):
         for pattern in self.remove_patterns:
@@ -97,7 +98,6 @@ class ODSParser:
                         self.result[table_name].append(single_row)
 
     def get_result(self):
-        os.remove('content.xml')
         return self.result
 
 
