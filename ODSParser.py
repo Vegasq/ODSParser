@@ -5,10 +5,11 @@
 # vegasq@gmail.com
 # 11.03.2013
 
-import os
-import re
-import xml.etree.ElementTree as etree
 import zipfile
+import xml.etree.ElementTree as etree
+import os
+
+import re
 
 class ODSParser:
     '''ODS2Array converter'''
@@ -22,7 +23,6 @@ class ODSParser:
 
     '''Default ODS file'''
     ods = 'gg_text_value.ods'
-    '''Extracted ODS'''
     content = 'content.xml'
 
     remove_patterns = [
@@ -33,19 +33,17 @@ class ODSParser:
     ]
 
     def __init__(self, filename = False):
-        '''Extract ODS and parse it'''
+        '''Make you life simpler'''
         if (filename != False):
             self.ods = filename
         self.open()
         self.row_parser()
-        # TODO Check usage by thirdparty tools
         os.remove(self.content)
 
     def clean(self, xml):
-        '''Removing problematic tags'''
         for pattern in self.remove_patterns:
             rmtag = re.compile(pattern)
-            xml = re.sub(rmtag1, '', xml)
+            xml = re.sub(rmtag, '', xml)
         return xml
 
     def open(self):
@@ -53,10 +51,13 @@ class ODSParser:
         z = zipfile.ZipFile(self.ods)
         z.extract(self.content)
 
-        content = open(self.content,'w+')
+        content = open(self.content,'r')
+        lines = content.read()
+        content.close()
 
-        lines = self.clean(content.read())
+        lines = self.clean(lines)
 
+        content = open(self.content,'w')
         content.write(lines)
         content.close()
 
@@ -72,7 +73,7 @@ class ODSParser:
         +  multitabs added
         '''
         for child in self.root[3]:
-            # For each list in table
+            ''' For each list in table '''
             for table_list in child:
                 table_name = table_list.attrib.get(self.table_name)
                 for row in table_list:
