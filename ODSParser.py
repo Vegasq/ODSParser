@@ -5,11 +5,10 @@
 # vegasq@gmail.com
 # 11.03.2013
 
-import zipfile
-import xml.etree.ElementTree as etree
 import os
-
 import re
+import xml.etree.ElementTree as etree
+import zipfile
 
 class ODSParser:
     '''ODS2Array converter'''
@@ -33,7 +32,7 @@ class ODSParser:
     ]
 
     def __init__(self, filename = False):
-        '''Make you life simpler'''
+        ''''''
         if (filename != False):
             self.ods = filename
         self.open()
@@ -50,21 +49,15 @@ class ODSParser:
         z = zipfile.ZipFile(self.ods)
         z.extract(self.content)
 
-        content = open(self.content,'r')
-        lines = content.read()
-        content.close()
+        content = open(self.content,'w+')
 
-        lines = self.clean(lines)
+        lines = self.clean(content.read())
 
-        content = open(self.content,'w')
         content.write(lines)
         content.close()
 
         tree = etree.parse(self.content)
         self.root = tree.getroot()
-
-
-
 
     def row_parser(self):
         '''
@@ -75,6 +68,7 @@ class ODSParser:
         +  multitabs added
         '''
         for child in self.root[3]:
+            # For each list in table
             for table_list in child:
                 table_name = table_list.attrib.get(self.table_name)
                 for row in table_list:
@@ -88,7 +82,7 @@ class ODSParser:
                             text = text.strip()
                             single_row[elem_num] = text
 
-                        # append repeated calls
+                        # append repeated cells
                         if(self.repeat in cell_elem.attrib and int(cell_elem.attrib[self.repeat]) < 100):
                             counter = int(cell_elem.attrib[self.repeat])
                             while counter > 1:
@@ -103,7 +97,7 @@ class ODSParser:
                         self.result[table_name].append(single_row)
 
     def get_result(self):
-        #os.remove('content.xml')
+        os.remove('content.xml')
         return self.result
 
 
